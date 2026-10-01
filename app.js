@@ -86,8 +86,8 @@ function initAlbum(config){
 function initIntro(config,music){
   const intro=$('#intro');for(const [key,id] of [['him','portrait-him'],['her','portrait-her']]){const url=config.intro?.[key];if(url){const photo=config.intro.portraits?.[key]||{url};const frame=photoViewport(photo,1);frame.querySelector('img').alt=key==='him'?'O meu universo':'O seu universo';frame.querySelector('img').loading='eager';$('#'+id).replaceChildren(frame);}}
 
-  let finished=false;function enter(){if(finished)return;finished=true;music.begin();intro.classList.add('departing');intro.setAttribute('aria-hidden','true');setTimeout(()=>{intro.hidden=true;$('#sound-toggle').focus({preventScroll:true});},600);}
-  let animated=false;function animate(){if(animated||finished)return;animated=true;intro.classList.remove('waiting');$('#enter-site').textContent='Entrar na nossa história ♡';setTimeout(enter,matchMedia('(prefers-reduced-motion: reduce)').matches?1800:6500);}
+  let finished=false,enterTimer;function enter(){if(finished)return;finished=true;clearTimeout(enterTimer);music.begin();intro.classList.add('departing');intro.setAttribute('aria-hidden','true');setTimeout(()=>{intro.hidden=true;$('#sound-toggle').focus({preventScroll:true});},600);}
+  let animated=false;function animate(){if(animated||finished)return;animated=true;intro.classList.remove('waiting');$('#enter-site').textContent='Entrar na nossa história ♡';const duration=parseFloat(getComputedStyle(intro).getPropertyValue('--intro-duration'))||14;enterTimer=setTimeout(enter,matchMedia('(prefers-reduced-motion: reduce)').matches?1800:duration*1000+600);}
   $('#enter-site').onclick=()=>{if(intro.classList.contains('waiting')){music.intro();animate();}else enter();};$('#skip-intro').onclick=enter;
   intro.classList.add('waiting');$('#enter-site').textContent='Começar com música ♡';music.intro().then(allowed=>{if(allowed)animate();});
 }
