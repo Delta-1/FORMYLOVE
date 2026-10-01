@@ -2,6 +2,8 @@
 
 Uma carta gótica para minha mulher, feita por Victor H. Souza. Preto e vinho, moldura de rosas original, detalhes prateados, brilho discreto e enigmas em roxo. Interface em português e responsiva para celular.
 
+![Prévia de computador](docs/preview-desktop.png)
+
 ## Já incluído
 
 - Carta editável e as frases de química, biologia, matemática, geografia e história.
@@ -23,7 +25,7 @@ O site é estático, sem dependências de produção. Os caminhos são relativos
 
 ## Fotos privadas no Google Drive — ativação única necessária
 
-Pasta criada: [FORMYLOVE — Nosso álbum](https://drive.google.com/drive/folders/1fGvk5CQtmG-3gQTdWP-2WasN5RnEr2z8).
+Pasta criada: **FORMYLOVE — Nosso álbum**. Abra-a no seu Drive ou pelo link entregue na conversa. Seu identificador deve ficar somente nas propriedades do Apps Script, fora dos arquivos públicos.
 
 O plugin do Drive cria a pasta, mas não publica aplicativos do Google Apps Script. Por isso, o código está pronto e a publicação precisa ser feita na conta Google que tem acesso à pasta. **Até essa ativação, o site mostra explicitamente que o álbum está desconectado e não promete salvar fotos.**
 
@@ -31,6 +33,7 @@ O plugin do Drive cria a pasta, mas não publica aplicativos do Google Apps Scri
 2. Cole `drive/Code.gs` no arquivo Code.gs.
 3. Crie um arquivo HTML chamado **Bridge** e cole `drive/Bridge.html`.
 4. Nas Configurações do projeto → Propriedades do script, defina:
+   - `ALBUM_FOLDER_ID`: ID da pasta privada, encontrado na parte final do link da pasta no Drive.
    - `ALBUM_PASSWORD`: frase secreta de pelo menos 12 caracteres. Não publique essa frase no repositório nem em config.json.
    - `ALLOWED_ORIGINS`: origem exata do site, normalmente `https://delta-1.github.io`, sem `/FORMYLOVE` nem barra final. Para testes, pode adicionar `http://localhost:4173`, separado por vírgula.
 5. Execute **setupAlbum_** pelo editor e autorize o Drive. Ela testa a pasta, transforma a senha em hash com salt e remove a senha em texto das propriedades. Para trocar a senha, defina ALBUM_PASSWORD novamente e execute setupAlbum_ outra vez: as sessões anteriores deixam de valer.
@@ -67,3 +70,5 @@ npm test
 Não precisa instalar pacotes para executar. Os testes cobrem contador, validação de configuração, bloqueio de leitura fora da pasta, sessão e deduplicação do envio. A integração real com Google precisa da publicação acima; testes locais não substituem essa validação.
 
 A arte original das rosas foi criada com geração de imagens a partir do conceito: “rosas carmim, gravura vitoriana, arco de catedral gótica prateado, lua, papel preto texturizado, sem texto”. Asset final: `assets/gothic-rose.webp`. A figurinha de `assets/pedido.png` foi fornecida pelo Victor. As duas referências visuais orientaram a direção; não foram copiadas como interface.
+
+Fontes incluídas localmente, com licenças OFL em `assets/fonts/`. Confira [a validação e seus limites](docs/VALIDACAO.md).
