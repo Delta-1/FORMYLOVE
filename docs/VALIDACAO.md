@@ -12,9 +12,9 @@
 
 ## Limites da verificação
 
-- Player testado com uma simulação da API YouTube: troca para CuM61zC3xFo, volume e pausa. Isso verifica os controles do site; não garante disponibilidade de cada vídeo ou permissão de incorporação no YouTube.
+- Player testado com uma simulação da API YouTube: troca para CuM61zC3xFo, volume e pausa. No site publicado, o player real de Lonely Day carregou e o controle de volume mudou de 35% para 12%. A disponibilidade das demais faixas depende do YouTube.
 - Álbum testado com serviços Google simulados: autenticação, isolamento da pasta e envio. A integração real exige publicar Code.gs + Bridge.html na conta Google e verificar o primeiro envio na pasta. Ainda não ativada nesta entrega.
 - Câmera: interface e fluxo implementados. O acesso real depende de HTTPS, aparelho e autorização; não houve captura física de câmera durante a validação.
-- Pages: workflow incluído. A opção GitHub Actions precisa ser habilitada em Settings → Pages; o plugin disponível não oferece uma ação para mudar essa configuração.
+- Pages: publicação concluída com sucesso. A página, o config.json e a arte retornaram HTTP 200; a carta também foi verificada no navegador no endereço https://delta-1.github.io/FORMYLOVE/.
 
 As prévias de computador e celular estão nesta pasta. As fotos pessoais ainda não foram fornecidas; o álbum mostra espaços vazios e não usa retratos inventados.

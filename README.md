@@ -2,7 +2,7 @@
 
 Uma carta gótica para minha mulher, feita por Victor H. Souza. Preto e vinho, moldura de rosas original, detalhes prateados, brilho discreto e enigmas em roxo. Interface em português e responsiva para celular.
 
-![Prévia de computador](docs/preview-desktop.png)
+![Prévia de computador](docs/preview-desktop.jpg)
 
 ## Já incluído
 
