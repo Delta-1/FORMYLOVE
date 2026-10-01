@@ -21,14 +21,14 @@ export function validateConfig(c) {
   if (!Array.isArray(c.animeOrder) || c.animeOrder.length<2 || c.animeOrder.length>10 || c.animeOrder.some(x=>typeof x!=='string'||x.length>100) || new Set(c.animeOrder).size!==c.animeOrder.length) throw new Error('Informe de 2 a 10 animes diferentes.');
   if (!Array.isArray(c.science)||c.science.some(p=>typeof p.subject!=='string'||typeof p.line!=='string')) throw new Error('Frases inválidas.');
   if (!Array.isArray(c.playlists)||c.playlists.length>100) throw new Error('Playlist inválida.');
-  for (const song of [...c.playlists,...(c.proposalSong?[c.proposalSong]:[])]) {
+  for (const song of [...c.playlists,...(c.proposalSong?[c.proposalSong]:[]),...(c.intro?.song?[c.intro.song]:[])]) {
     if (typeof song.title!=='string'||typeof song.artist!=='string') throw new Error('Confira o título e artista das músicas.');
     if (song.type==='youtube' && !/^[\w-]{11}$/.test(song.videoId)) throw new Error('ID de vídeo inválido.');
     if (song.type==='audio' && !safeMediaUrl(song.url)) throw new Error('Endereço de áudio inválido.');
     if (!['youtube','audio'].includes(song.type)) throw new Error('Tipo de música inválido.');
   }
   if (!Array.isArray(c.photos) || c.photos.some(p=>!safeMediaUrl(p.url)||typeof p.feeling!=='string')) throw new Error('Fotos inválidas.');
-  if (!c.drive || (c.drive.endpoint && !validEndpoint(c.drive.endpoint))) throw new Error('Use o link /exec da publicação do Apps Script.');
+  for(const key of ['him','her']) if(c.intro?.[key]&&!safeMediaUrl(c.intro[key])) throw new Error('Foto da abertura inválida.');
   return c;
 }
 export async function loadConfig() {

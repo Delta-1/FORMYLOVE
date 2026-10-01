@@ -1,5 +1,5 @@
 import {loadConfig,elapsed,normalize,readProgress,writeProgress} from './core.js';
-import {DriveAlbum} from './drive-client.js';
+import {listMemories,saveMemory} from './memories.js';
 import {initMusic} from './music.js';
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
@@ -17,8 +17,8 @@ function start(config){
   $('#science-love').replaceChildren(...config.science.map(p=>{const n=el('p');n.append(el('span',p.subject),el('strong',p.line));return n;}));
   const dt=new Date(config.startDate);$('#start-label').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric'}).format(dt).replaceAll('/',' · ');$('#year').textContent=new Intl.DateTimeFormat('en',{timeZone:'America/Sao_Paulo',year:'numeric'}).format(dt);
   function tick(){const time=elapsed(config.startDate);for(const [k,v] of Object.entries(time))$('#'+k).textContent=String(v).padStart(2,'0');}tick();setInterval(tick,1000);
-  const music=initMusic(config,toast);initQuests(config,music);initAlbum(config);
-  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){$$('nav a').forEach(a=>a.classList.toggle('active',a.hash==='#'+e.target.id));}});},{rootMargin:'-15% 0px -65% 0px'});$$('.chapter').forEach(s=>observer.observe(s));
+  const music=initMusic(config,toast);initQuests(config,music);initAlbum(config);initIntro(config,music);
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){$$('.header nav a,.bottom-tabs a').forEach(a=>a.classList.toggle('active',a.hash==='#'+e.target.id));}});},{rootMargin:'-15% 0px -65% 0px'});$$('.chapter').forEach(s=>observer.observe(s));
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const reveal=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');reveal.unobserve(e.target);}}),{threshold:.09});$$('.letter-frame,.section-top,.memory-card,.quest-card,.music-layout').forEach(n=>{n.classList.add('reveal');reveal.observe(n);});}
 }
 function initQuests(config,music){
@@ -61,30 +61,18 @@ function initQuests(config,music){
 }
 function celebrate(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;for(let i=0;i<28;i++){const n=el('span',i%2?'♡':'✦','celebration');n.style.left=Math.random()*100+'vw';n.style.animationDelay=Math.random()*1.8+'s';n.style.fontSize=(14+Math.random()*20)+'px';document.body.append(n);setTimeout(()=>n.remove(),6200);}}
 function initAlbum(config){
-  const service=config.drive.endpoint?new DriveAlbum(config.drive.endpoint):null;let photos=[...config.photos],filter='all',cursor=null,authenticated=false,loadVersion=0,photoData=null,camera=null,facing='environment';
-  const blobs=new Map(),imageRequests=new Map();let busy=false;
-  function status(message){$('#album-status').textContent=message;}
+  let photos=[...config.photos],filter='all',photoData=null,camera=null,facing='environment';
   function render(){
     const list=filter==='all'?photos:photos.filter(p=>p.category===filter);$('#album-grid').replaceChildren();
-    if(!list.length){['O seu sorriso.','O meu olhar.','O nosso momento.'].forEach((text,i)=>{const n=el('div',undefined,'empty-memory');n.append(el('span',['♡','✦','∞'][i],'empty-symbol'),el('p',text),el('small',authenticated?'Ainda não há fotos por aqui.':'Uma memória à espera de ser guardada.'));$('#album-grid').append(n);});return;}
-    list.forEach(p=>{
-      const b=el('button',undefined,'memory-card');const img=el('img');img.loading='lazy';img.alt=p.feeling||'Uma memória nossa';if(p.url)img.src=p.url;else if(blobs.has(p.id))img.src=blobs.get(p.id);else loadImage(p,img);
-      b.append(img,el('span',p.feeling||'Um instante nosso.'),el('small',formatDate(p.date)));b.onclick=()=>view(p);$('#album-grid').append(b);
-    });
+    if(!list.length){['O seu sorriso.','O meu olhar.','O nosso momento.'].forEach((text,i)=>{const n=el('div',undefined,'empty-memory');n.append(el('span',['♡','✦','∞'][i],'empty-symbol'),el('p',text),el('small','Uma memória à espera de ser guardada.'));$('#album-grid').append(n);});return;}
+    list.forEach(p=>{const b=el('button',undefined,'memory-card'),img=el('img');img.loading='lazy';img.alt=p.feeling||'Uma memória nossa';img.src=p.url;b.append(img,el('span',p.feeling||'Um instante nosso.'),el('small',formatDate(p.date)));b.onclick=()=>view(p);$('#album-grid').append(b);});
   }
-  async function loadImage(p,img){try{if(!imageRequests.has(p.id))imageRequests.set(p.id,service.image(p.id).finally(()=>imageRequests.delete(p.id)));const r=await imageRequests.get(p.id);const url='data:'+r.mime+';base64,'+r.data;blobs.set(p.id,url);if(img.isConnected)img.src=url;}catch(e){img.alt='Não foi possível carregar esta foto.';}}
-  async function view(p){const content=$('#photo-detail');content.replaceChildren(el('p','UMA MEMÓRIA NOSSA','eyebrow'));const img=el('img');img.alt=p.feeling||'Uma memória nossa';img.src=p.url||blobs.get(p.id)||'';content.append(img,el('h3',p.feeling||'Um instante que mereceu ficar.'),el('p',formatDate(p.date),'small'));show($('#photo-dialog'));if(!img.getAttribute('src'))await loadImage(p,img);}
-  function needsLogin(){if(!service){toast('O álbum está preparado. Falta ativar a conexão com o Drive nos Bastidores.');return false;}if(!authenticated){show($('#album-login'));return false;}return true;}
-  async function refresh(more=false){if(!authenticated){status(service?'O álbum é só nosso. Entre para ver as memórias.':'O nosso álbum está aguardando a conexão com o Drive.');render();return;}
-    if(busy)return;busy=true;$('#refresh-album').disabled=true;$('#more-photos').disabled=true;status('Buscando as nossas memórias…');const version=++loadVersion;
-    try{const r=await service.list(more?cursor:null);if(version!==loadVersion)return;cursor=r.cursor;photos=(more?photos:[...config.photos]).concat(r.photos).filter((p,i,a)=>a.findIndex(x=>(x.id||x.url)===(p.id||p.url))===i);photos.sort((a,b)=>String(b.date).localeCompare(String(a.date)));$('#more-photos').hidden=!cursor;status(photos.length+' memórias guardadas.');render();}
-    catch(e){status(e.message);if(/Sessão|acesso/i.test(e.message)){authenticated=false;service.token=null;blobs.clear();photos=[...config.photos];render();}}
-    finally{busy=false;$('#refresh-album').disabled=false;$('#more-photos').disabled=false;}
-  }
-  $('#album-login-form').onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;$('#login-status').textContent='Abrindo o nosso álbum…';try{await service.login($('#album-password').value);$('#album-password').value='';authenticated=true;$('#album-login').close();await refresh();}catch(err){$('#login-status').textContent=err.message;}finally{b.disabled=false;}};
-  $('#refresh-album').onclick=()=>{if(needsLogin())refresh();};$('#more-photos').onclick=()=>refresh(true);
+  function view(p){const content=$('#photo-detail'),img=el('img');img.alt=p.feeling||'Uma memória nossa';img.src=p.url;content.replaceChildren(img,el('h3',p.feeling||'Um instante que mereceu ficar.'),el('p',formatDate(p.date),'small'));const link=el('a','Baixar esta lembrança','button');link.href=p.url;link.download='nossa-memoria.jpg';content.append(link);show($('#photo-dialog'));}
+  async function refresh(){try{photos=[...config.photos,...await listMemories()];photos.sort((a,b)=>String(b.date).localeCompare(String(a.date)));$('#album-status').textContent='As fotos feitas aqui ficam somente neste navegador. Baixe as lembranças para guardar uma cópia.';}catch{$('#album-status').textContent='Não foi possível acessar as memórias deste aparelho.';}render();}
+  $('#refresh-album').onclick=refresh;
   $$('.chip').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$$('.chip').forEach(n=>n.classList.toggle('active',n===b));render();});
-  $('#add-memory').onclick=()=>{if(!needsLogin())return;$('#memory-date').value=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());$('#upload-status').textContent='';show($('#memory-dialog'));};
+  function openMemory(){const d=new Date();$('#memory-date').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');$('#upload-status').textContent='Salva neste aparelho, com carinho.';show($('#memory-dialog'));}
+  $('#add-memory').onclick=openMemory;$('#camera-tab').onclick=()=>{openMemory();startCamera();};
   function stopCamera(){camera?.getTracks().forEach(t=>t.stop());camera=null;$('#camera-area').hidden=true;$('#camera-video').srcObject=null;}
   $('#memory-dialog').addEventListener('close',()=>{stopCamera();photoData=null;$('#photo-preview').hidden=true;$('#photo-preview').removeAttribute('src');$('#save-memory').disabled=true;$('#photo-input').value='';$('#memory-feeling').value='';});
   async function setPhoto(source){
@@ -95,12 +83,14 @@ function initAlbum(config){
   $('#photo-input').onchange=e=>{const file=e.target.files[0];if(!file)return;if(file.size>20*1024*1024){$('#upload-status').textContent='Escolha uma foto de até 20 MB.';return;}setPhoto(file);};
   async function startCamera(){stopCamera();try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Use “Escolher foto” para fotografar pelo celular.');camera=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:1600}},audio:false});if(!$('#memory-dialog').open){stopCamera();return;}$('#camera-video').srcObject=camera;$('#camera-area').hidden=false;$('#photo-preview').hidden=true;await $('#camera-video').play();}catch(e){$('#upload-status').textContent='Não consegui abrir a câmera. Autorize o acesso ou use “Escolher foto”.';}}
   $('#camera-start').onclick=startCamera;$('#camera-switch').onclick=()=>{facing=facing==='environment'?'user':'environment';startCamera();};$('#camera-shutter').onclick=()=>setPhoto($('#camera-video'));
-  let requestId=null,lastData=null;
-  $('#memory-form').onsubmit=async e=>{e.preventDefault();if(!photoData||!authenticated)return;$('#save-memory').disabled=true;$('#upload-status').textContent='Guardando o momento no Drive…';const fingerprint=photoData+'|'+$('#memory-feeling').value+'|'+$('#memory-date').value+'|'+$('#memory-category').value;if(fingerprint!==lastData){requestId=crypto.randomUUID();lastData=fingerprint;}
-    try{await service.upload({requestId,data:photoData.split(',')[1],mime:'image/jpeg',feeling:$('#memory-feeling').value.trim(),category:$('#memory-category').value,date:$('#memory-date').value});$('#memory-dialog').close();toast('O nosso momento foi guardado no Drive. ♡');requestId=null;lastData=null;await refresh();}
-    catch(err){$('#upload-status').textContent=err.message;$('#save-memory').disabled=false;}
-  };
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera();else if(authenticated&&!$('#memory-dialog').open)refresh();});
-  refresh();
+  $('#memory-form').onsubmit=async e=>{e.preventDefault();if(!photoData)return;$('#save-memory').disabled=true;try{await saveMemory({id:crypto.randomUUID(),url:photoData,feeling:$('#memory-feeling').value.trim(),category:$('#memory-category').value,date:$('#memory-date').value});$('#memory-dialog').close();toast('Sua lembrança foi salva neste aparelho. ♡');await refresh();}catch{$('#upload-status').textContent='Não foi possível salvar. O armazenamento do aparelho pode estar cheio.';$('#save-memory').disabled=false;}};
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera();});refresh();
 }
+function initIntro(config,music){
+  const intro=$('#intro');for(const [key,id] of [['him','portrait-him'],['her','portrait-her']]){const url=config.intro?.[key];if(url){const img=el('img');img.src=url;img.alt=key==='him'?'O meu universo':'O seu universo';$('#'+id).replaceChildren(img);}}
+  let finished=false;function enter(){if(finished)return;finished=true;music.begin();intro.classList.add('departing');intro.setAttribute('aria-hidden','true');setTimeout(()=>{intro.hidden=true;$('#sound-toggle').focus({preventScroll:true});},600);}
+  $('#enter-site').onclick=enter;$('#skip-intro').onclick=enter;
+  music.intro();
+}
+
 function formatDate(value){const date=new Date(/^\d{4}-\d{2}-\d{2}$/.test(value)?value+'T12:00:00-03:00':value);return Number.isFinite(date.getTime())?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'long',year:'numeric'}).format(date):'Um momento nosso';}

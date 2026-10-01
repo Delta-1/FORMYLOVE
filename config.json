@@ -64,13 +64,15 @@
     }
   ],
   "photos": [],
-  "drive": {
-    "endpoint": ""
-  },
   "proposalSong": {
     "title": "Quando a nossa porta se abre",
     "artist": "A música do nosso momento",
     "type": "youtube",
     "videoId": "CuM61zC3xFo"
+  },
+  "intro": {
+    "him": "",
+    "her": "",
+    "song": null
   }
 }
