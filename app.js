@@ -90,7 +90,7 @@ function initIntro(config,music){
   const intro=$('#intro');for(const [key,id] of [['him','portrait-him'],['her','portrait-her']]){const url=config.intro?.[key];if(url){const img=el('img');img.src=url;img.alt=key==='him'?'O meu universo':'O seu universo';$('#'+id).replaceChildren(img);}}
   let finished=false;function enter(){if(finished)return;finished=true;music.begin();intro.classList.add('departing');intro.setAttribute('aria-hidden','true');setTimeout(()=>{intro.hidden=true;$('#sound-toggle').focus({preventScroll:true});},600);}
   $('#enter-site').onclick=enter;$('#skip-intro').onclick=enter;
-  music.intro();
+  music.intro();setTimeout(enter,matchMedia('(prefers-reduced-motion: reduce)').matches?1800:6500);
 }
 
 function formatDate(value){const date=new Date(/^\d{4}-\d{2}-\d{2}$/.test(value)?value+'T12:00:00-03:00':value);return Number.isFinite(date.getTime())?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'long',year:'numeric'}).format(date):'Um momento nosso';}

@@ -30,7 +30,7 @@ export function initMusic(config, toast) {
     if(song.type==='audio') {
       player?.pauseVideo?.();$('#youtube-player').hidden=true;audio.hidden=true;
       if(audio.getAttribute('src')!==song.url)audio.src=song.url;
-      try {await audio.play();playing=true;$('#player-status').textContent='';}catch{$('#player-status').textContent='Toque no player para ouvir.';}
+      try {await audio.play();playing=true;$('#player-status').textContent='';}catch{playing=false;$('#player-status').textContent='Toque em Tocar nos ajustes para ouvir.';toast('Toque em ⚙ e depois em Tocar para começar a ouvir. ♫');}
       update();return;
     }
     audio.pause();audio.hidden=true;$('#youtube-player').hidden=false;
@@ -43,7 +43,7 @@ export function initMusic(config, toast) {
         onError:e=>{$('#player-status').textContent='Este vídeo não pôde ser tocado aqui. Abra no YouTube ou escolha outra faixa.';playing=false;update();},
         onAutoplayBlocked:()=>{$('#player-status').textContent='Toque em ▶ para começar a ouvir.';}
       }});
-    }catch(e){$('#player-status').textContent=e.message;}
+    }catch(e){requestedPlay=false;playing=false;$('#player-status').textContent=e.message;update();}
   }
   function pause(){requestedPlay=false;audio.pause();if(ready)player.pauseVideo();playing=false;update();}
   function toggle(){playing?pause():play();}
