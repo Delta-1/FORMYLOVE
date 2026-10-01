@@ -39,6 +39,17 @@
   ],
   "playlists": [
     {
+      "type": "audio",
+      "url": "assets/audio/abertura.mp3",
+      "title": "Cigarettes out the Window",
+      "artist": "TV Girl",
+      "parts": [
+        "assets/audio/abertura-01.part",
+        "assets/audio/abertura-02.part",
+        "assets/audio/abertura-03.part"
+      ]
+    },
+    {
       "title": "Lonely Day",
       "artist": "System Of A Down",
       "type": "youtube",
@@ -73,6 +84,16 @@
   "intro": {
     "him": "",
     "her": "",
-    "song": null
+    "song": {
+      "type": "audio",
+      "url": "assets/audio/abertura.mp3",
+      "title": "Cigarettes out the Window",
+      "artist": "TV Girl",
+      "parts": [
+        "assets/audio/abertura-01.part",
+        "assets/audio/abertura-02.part",
+        "assets/audio/abertura-03.part"
+      ]
+    }
   }
 }

@@ -24,6 +24,7 @@ export function validateConfig(c) {
   for (const song of [...c.playlists,...(c.proposalSong?[c.proposalSong]:[]),...(c.intro?.song?[c.intro.song]:[])]) {
     if (typeof song.title!=='string'||typeof song.artist!=='string') throw new Error('Confira o título e artista das músicas.');
     if (song.type==='youtube' && !/^[\w-]{11}$/.test(song.videoId)) throw new Error('ID de vídeo inválido.');
+    if (song.parts&&(!Array.isArray(song.parts)||song.parts.length>50||song.parts.some(p=>!safeMediaUrl(p)))) throw new Error('Partes de áudio inválidas.');
     if (song.type==='audio' && !safeMediaUrl(song.url)) throw new Error('Endereço de áudio inválido.');
     if (!['youtube','audio'].includes(song.type)) throw new Error('Tipo de música inválido.');
   }

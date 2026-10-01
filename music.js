@@ -2,7 +2,8 @@ export function initMusic(config, toast) {
   const $=s=>document.querySelector(s), tracks=config.playlists;let index=0,current=tracks[0],player=null,ready=false,playing=false,requestedPlay=false,apiPromise=null,special=false;
   let volume=35;try{volume=Math.max(0,Math.min(100,Number(localStorage.getItem('formylove.volume')??35)));}catch{}
   $('#volume').value=volume;$('#volume-value').value=volume+'%';
-  if(!Number.isFinite(volume))volume=35;const audio=$('#audio');audio.volume=volume/100;
+  if(!Number.isFinite(volume))volume=35;const audio=$('#audio');audio.volume=volume/100;const audioSources=new Map();
+  function source(song){if(!song.parts?.length)return Promise.resolve(song.url);if(!audioSources.has(song.url))audioSources.set(song.url,Promise.all(song.parts.map(async path=>{const r=await fetch(path);if(!r.ok)throw new Error('Não consegui carregar a música.');return r.arrayBuffer();})).then(parts=>URL.createObjectURL(new Blob(parts,{type:'audio/mpeg'}))).catch(e=>{audioSources.delete(song.url);throw e;}));return audioSources.get(song.url);}
   function update() {
     if(!current)return;
     $('#now-title').textContent=current.title;$('#now-artist').textContent=current.artist;$('#mini-title').textContent=current.title;
@@ -29,8 +30,7 @@ export function initMusic(config, toast) {
     requestedPlay=true;current=song;$('#mini-player').hidden=song.type==='audio';$('#player-status').textContent='Preparando a nossa trilha…';update();
     if(song.type==='audio') {
       player?.pauseVideo?.();$('#youtube-player').hidden=true;audio.hidden=true;
-      if(audio.getAttribute('src')!==song.url)audio.src=song.url;
-      try {await audio.play();playing=true;$('#player-status').textContent='';}catch{playing=false;$('#player-status').textContent='Toque em Tocar nos ajustes para ouvir.';toast('Toque em ⚙ e depois em Tocar para começar a ouvir. ♫');}
+      try {const src=await source(song);if(current!==song)return;if(audio.getAttribute('src')!==src)audio.src=src;await audio.play();playing=true;$('#player-status').textContent='';}catch{playing=false;$('#player-status').textContent='Toque em Tocar nos ajustes para ouvir.';toast('Toque em ⚙ e depois em Tocar para começar a ouvir. ♫');}
       update();return;
     }
     audio.pause();audio.hidden=true;$('#youtube-player').hidden=false;
@@ -47,7 +47,7 @@ export function initMusic(config, toast) {
   }
   function pause(){requestedPlay=false;audio.pause();if(ready)player.pauseVideo();playing=false;update();}
   function toggle(){playing?pause():play();}
-  function next(delta){if(!tracks.length)return;if(special)return;index=delta<0?(index+tracks.length-1)%tracks.length:(tracks.length===1?0:(index+1+Math.floor(Math.random()*(tracks.length-1)))%tracks.length);play(tracks[index]);}
+  function next(delta){if(!tracks.length||special)return;const native=tracks.filter(s=>s.type==='audio');if(current?.type==='audio'&&native.length){const choices=native.filter(s=>s.url!==current.url);play((choices.length?choices:native)[Math.floor(Math.random()*(choices.length||native.length))]);return;}index=delta<0?(index+tracks.length-1)%tracks.length:(tracks.length===1?0:(index+1+Math.floor(Math.random()*(tracks.length-1)))%tracks.length);play(tracks[index]);}
   $('#track-list').replaceChildren();
   tracks.forEach((s,i)=>{
     const row=document.createElement('button');row.className='track-row';const num=document.createElement('span');num.textContent=String(i+1).padStart(2,'0');
@@ -60,6 +60,6 @@ export function initMusic(config, toast) {
   $('#mini-close').onclick=()=>{pause();$('#mini-player').hidden=true;};
   const settings=$('#sound-settings');$('#sound-toggle').onclick=$('#settings-tab').onclick=()=>settings.showModal();$('#settings-play').onclick=toggle;$('#settings-next').onclick=()=>next(1);$('#see-playlist').onclick=()=>settings.close();
   $('#volume').oninput=e=>{volume=Number(e.target.value);$('#volume-value').value=volume+'%';audio.volume=volume/100;if(ready)player.setVolume(volume);try{localStorage.setItem('formylove.volume',String(volume));}catch{}};
-  audio.onended=()=>{if(current===config.intro?.song){special=false;play(tracks[index]);}else if(!special)next(1);};audio.onpause=()=>{if(current?.type==='audio'){playing=false;update();}};audio.onplay=()=>{playing=true;update();};
-  return {proposal:()=>{pause();special=true;audio.loop=true;return config.proposalSong?play(config.proposalSong):Promise.resolve();},intro:()=>{if(config.intro?.song?.type==='audio'){special=true;play(config.intro.song);}},begin:()=>{pause();special=false;audio.loop=false;index=Math.floor(Math.random()*tracks.length);if(tracks[index]?.type==='audio')play(tracks[index]);else{toast('Toque em uma música da playlist para começar a ouvir. ♫');}},pause};
+  audio.onended=()=>{if(special&&current===config.proposalSong)return;special=false;const native=tracks.filter(s=>s.type==='audio');if(native.length){const choices=native.filter(s=>s.url!==current?.url);play((choices.length?choices:native)[Math.floor(Math.random()*(choices.length||native.length))]);}};audio.onpause=()=>{if(current?.type==='audio'){playing=false;update();}};audio.onplay=()=>{playing=true;update();};
+  return {proposal:()=>{pause();special=true;audio.loop=true;return config.proposalSong?play(config.proposalSong):Promise.resolve();},intro:async()=>{if(config.intro?.song?.type==='audio'){special=true;await play(config.intro.song);return playing;}return true;},begin:()=>{if(current===config.intro?.song&&playing){special=false;audio.loop=false;return;}pause();special=false;audio.loop=false;index=Math.floor(Math.random()*tracks.length);if(tracks[index]?.type==='audio')play(tracks[index]);else{toast('Toque em uma música da playlist para começar a ouvir. ♫');}},pause};
 }

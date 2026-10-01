@@ -5,7 +5,7 @@ test('counter uses the Brazil offset, including before the first day',()=>{
   const start='2026-08-25T00:00:00-03:00';assert.deepEqual(elapsed(start,Date.parse('2026-10-01T15:55:12-03:00')),{days:37,hours:15,minutes:55,seconds:12});
   assert.deepEqual(elapsed(start,Date.parse('2026-08-24T23:00:00-03:00')),{days:0,hours:0,minutes:0,seconds:0});
 });
-test('configuration accepts our complete four-song playlist and special song',()=>{assert.equal(validateConfig(config),config);assert.equal(config.playlists.length,4);assert.equal(config.proposalSong.videoId,'CuM61zC3xFo');});
+test('configuration accepts our four YouTube songs, native opening and special song',()=>{assert.equal(validateConfig(config),config);assert.equal(config.playlists.filter(s=>s.type==='youtube').length,4);assert.equal(config.proposalSong.videoId,'CuM61zC3xFo');});
 test('configuration rejects executable media and unsafe intro portraits',()=>{
   assert.equal(safeMediaUrl('javascript:alert(1)'),false);assert.equal(safeMediaUrl('//evil.test/photo'),false);
   assert.equal(validEndpoint('https://script.google.com.evil.test/macros/s/id/exec'),false);

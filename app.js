@@ -1,6 +1,6 @@
 import {loadConfig,elapsed,normalize,readProgress,writeProgress} from './core.js';
 import {listMemories,saveMemory} from './memories.js';
-import {initMusic} from './music.js?v=3';
+import {initMusic} from './music.js?v=5';
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 let toastTimer;
@@ -65,9 +65,10 @@ function initAlbum(config){
   function render(){
     const list=filter==='all'?photos:photos.filter(p=>p.category===filter);$('#album-grid').replaceChildren();
     if(!list.length){['O seu sorriso.','O meu olhar.','O nosso momento.'].forEach((text,i)=>{const n=el('div',undefined,'empty-memory');n.append(el('span',['♡','✦','∞'][i],'empty-symbol'),el('p',text),el('small','Uma memória à espera de ser guardada.'));$('#album-grid').append(n);});return;}
-    list.forEach(p=>{const b=el('button',undefined,'memory-card'),img=el('img');img.loading='lazy';img.alt=p.feeling||'Uma memória nossa';img.src=p.url;b.append(img,el('span',p.feeling||'Um instante nosso.'),el('small',formatDate(p.date)));b.onclick=()=>view(p);$('#album-grid').append(b);});
+    list.forEach(p=>{const b=el('button',undefined,'memory-card');b.append(photoViewport(p,.8),el('span',p.feeling||'Um instante nosso.'),el('small',p.date?formatDate(p.date):(p.category==='ela'?'O SEU UNIVERSO':'O MEU UNIVERSO')));b.onclick=()=>view(p);$('#album-grid').append(b);});
   }
-  function view(p){const content=$('#photo-detail'),img=el('img');img.alt=p.feeling||'Uma memória nossa';img.src=p.url;content.replaceChildren(img,el('h3',p.feeling||'Um instante que mereceu ficar.'),el('p',formatDate(p.date),'small'));const link=el('a','Baixar esta lembrança','button');link.href=p.url;link.download='nossa-memoria.jpg';content.append(link);show($('#photo-dialog'));}
+  function view(p){const content=$('#photo-detail');content.replaceChildren(photoViewport(p),el('h3',p.feeling||'Um instante que mereceu ficar.'));if(p.date)content.append(el('p',formatDate(p.date),'small'));const link=el('a','Baixar esta lembrança','button');link.href=p.url;link.download='nossa-memoria.jpg';content.append(link);show($('#photo-dialog'));}
+
   async function refresh(){try{photos=[...config.photos,...await listMemories()];photos.sort((a,b)=>String(b.date).localeCompare(String(a.date)));$('#album-status').textContent='As fotos feitas aqui ficam somente neste navegador. Baixe as lembranças para guardar uma cópia.';}catch{$('#album-status').textContent='Não foi possível acessar as memórias deste aparelho.';}render();}
   $('#refresh-album').onclick=refresh;
   $$('.chip').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$$('.chip').forEach(n=>n.classList.toggle('active',n===b));render();});
@@ -87,10 +88,23 @@ function initAlbum(config){
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera();});refresh();
 }
 function initIntro(config,music){
-  const intro=$('#intro');for(const [key,id] of [['him','portrait-him'],['her','portrait-her']]){const url=config.intro?.[key];if(url){const img=el('img');img.src=url;img.alt=key==='him'?'O meu universo':'O seu universo';$('#'+id).replaceChildren(img);}}
+  const intro=$('#intro');for(const [key,id] of [['him','portrait-him'],['her','portrait-her']]){const url=config.intro?.[key];if(url){const photo=config.intro.portraits?.[key]||{url};const frame=photoViewport(photo,1);frame.querySelector('img').alt=key==='him'?'O meu universo':'O seu universo';frame.querySelector('img').loading='eager';$('#'+id).replaceChildren(frame);}}
+
   let finished=false;function enter(){if(finished)return;finished=true;music.begin();intro.classList.add('departing');intro.setAttribute('aria-hidden','true');setTimeout(()=>{intro.hidden=true;$('#sound-toggle').focus({preventScroll:true});},600);}
-  $('#enter-site').onclick=enter;$('#skip-intro').onclick=enter;
-  music.intro();setTimeout(enter,matchMedia('(prefers-reduced-motion: reduce)').matches?1800:6500);
+  let animated=false;function animate(){if(animated||finished)return;animated=true;intro.classList.remove('waiting');$('#enter-site').textContent='Entrar na nossa história ♡';setTimeout(enter,matchMedia('(prefers-reduced-motion: reduce)').matches?1800:6500);}
+  $('#enter-site').onclick=()=>{if(intro.classList.contains('waiting')){music.intro();animate();}else enter();};$('#skip-intro').onclick=enter;
+  intro.classList.add('waiting');$('#enter-site').textContent='Começar com música ♡';music.intro().then(allowed=>{if(allowed)animate();});
 }
 
 function formatDate(value){const date=new Date(/^\d{4}-\d{2}-\d{2}$/.test(value)?value+'T12:00:00-03:00':value);return Number.isFinite(date.getTime())?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'long',year:'numeric'}).format(date):'Um momento nosso';}
+
+function photoViewport(photo,ratio){
+  const frame=el('div',undefined,'photo-window'),crop=el('div',undefined,'photo-crop'),img=el('img');
+  img.alt=photo.feeling||'Uma memória nossa';img.src=photo.url;img.loading='lazy';img.decoding='async';if(!photo.width)img.onload=()=>frame.replaceWith(photoViewport({...photo,width:img.naturalWidth,height:img.naturalHeight},ratio));
+  const width=photo.width||1,height=photo.height||1,c=photo.crop||{x:0,y:0,width,height},rotation=photo.rotation===-90?-90:0;
+  const pictureRatio=rotation?c.height/c.width:c.width/c.height,windowRatio=ratio||pictureRatio;
+  frame.style.aspectRatio=String(windowRatio);frame.style.setProperty('--photo-ratio',String(windowRatio));
+  const displayWidth=pictureRatio>windowRatio?pictureRatio/windowRatio*100:100,displayHeight=pictureRatio>windowRatio?100:windowRatio/pictureRatio*100;
+  crop.style.width=(rotation?displayHeight/windowRatio:displayWidth)+'%';crop.style.height=(rotation?displayWidth*windowRatio:displayHeight)+'%';crop.style.transform='translate(-50%,-50%) rotate('+rotation+'deg)';
+  img.style.width=width/c.width*100+'%';img.style.height=height/c.height*100+'%';img.style.left=-c.x/c.width*100+'%';img.style.top=-c.y/c.height*100+'%';crop.append(img);frame.append(crop);return frame;
+}
