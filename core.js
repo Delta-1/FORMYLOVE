@@ -21,10 +21,11 @@ export function validateConfig(c) {
   if (!Array.isArray(c.animeOrder) || c.animeOrder.length<2 || c.animeOrder.length>10 || c.animeOrder.some(x=>typeof x!=='string'||x.length>100) || new Set(c.animeOrder).size!==c.animeOrder.length) throw new Error('Informe de 2 a 10 animes diferentes.');
   if (!Array.isArray(c.science)||c.science.some(p=>typeof p.subject!=='string'||typeof p.line!=='string')) throw new Error('Frases inválidas.');
   if (!Array.isArray(c.playlists)||c.playlists.length>100) throw new Error('Playlist inválida.');
-  for (const song of [...c.playlists,...(c.proposalSong?[c.proposalSong]:[]),...(c.intro?.song?[c.intro.song]:[])]) {
+  for (const song of [...c.playlists,...(c.proposalSong?[c.proposalSong]:[]),...(c.acceptSong?[c.acceptSong]:[]),...(c.intro?.song?[c.intro.song]:[])]) {
     if (typeof song.title!=='string'||typeof song.artist!=='string') throw new Error('Confira o título e artista das músicas.');
     if (song.type==='youtube' && !/^[\w-]{11}$/.test(song.videoId)) throw new Error('ID de vídeo inválido.');
     if (song.parts&&(!Array.isArray(song.parts)||song.parts.length>50||song.parts.some(p=>!safeMediaUrl(p)))) throw new Error('Partes de áudio inválidas.');
+    if (song.startAt!==undefined&&(!Number.isFinite(song.startAt)||song.startAt<0||song.startAt>86400)) throw new Error('Início da música inválido.');
     if (song.type==='audio' && !safeMediaUrl(song.url)) throw new Error('Endereço de áudio inválido.');
     if (!['youtube','audio'].includes(song.type)) throw new Error('Tipo de música inválido.');
   }

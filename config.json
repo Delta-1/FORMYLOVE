@@ -50,36 +50,67 @@
       ]
     },
     {
+      "type": "audio",
+      "url": "assets/audio/lonely-day.mp3",
       "title": "Lonely Day",
       "artist": "System Of A Down",
-      "type": "youtube",
-      "videoId": "DnGdoEa1tPg"
+      "parts": [
+        "assets/audio/lonely-day-01.part",
+        "assets/audio/lonely-day-02.part",
+        "assets/audio/lonely-day-03.part"
+      ]
     },
     {
+      "type": "audio",
+      "url": "assets/audio/gorillaz-19-2000.mp3",
       "title": "19-2000",
       "artist": "Gorillaz",
-      "type": "youtube",
-      "videoId": "WXR-bCF5dbM"
+      "parts": [
+        "assets/audio/gorillaz-19-2000-01.part",
+        "assets/audio/gorillaz-19-2000-02.part",
+        "assets/audio/gorillaz-19-2000-03.part",
+        "assets/audio/gorillaz-19-2000-04.part"
+      ]
     },
     {
+      "type": "audio",
+      "url": "assets/audio/joseph.mp3",
       "title": "Joseph",
       "artist": "Falling In Reverse · Corey Taylor · Serj Tankian",
-      "type": "youtube",
-      "videoId": "Tk9TM7-eTmw"
+      "parts": [
+        "assets/audio/joseph-01.part",
+        "assets/audio/joseph-02.part",
+        "assets/audio/joseph-03.part",
+        "assets/audio/joseph-04.part"
+      ]
     },
     {
+      "type": "audio",
+      "url": "assets/audio/specialz.mp3",
       "title": "SPECIALZ",
-      "artist": "YouTube · música escolhida por nós",
-      "type": "youtube",
-      "videoId": "5RaU8K8sLTM"
+      "artist": "A nossa trilha",
+      "parts": [
+        "assets/audio/specialz-01.part",
+        "assets/audio/specialz-02.part",
+        "assets/audio/specialz-03.part",
+        "assets/audio/specialz-04.part"
+      ]
     }
   ],
   "photos": [],
   "proposalSong": {
+    "type": "audio",
+    "url": "assets/audio/komisan.mp3",
     "title": "Quando a nossa porta se abre",
-    "artist": "A música do nosso momento",
-    "type": "youtube",
-    "videoId": "CuM61zC3xFo"
+    "artist": "Komi-san wa",
+    "parts": [
+      "assets/audio/komisan-01.part",
+      "assets/audio/komisan-02.part",
+      "assets/audio/komisan-03.part",
+      "assets/audio/komisan-04.part",
+      "assets/audio/komisan-05.part"
+    ],
+    "startAt": 70
   },
   "intro": {
     "him": "",
@@ -95,5 +126,19 @@
         "assets/audio/abertura-03.part"
       ]
     }
+  },
+  "acceptSong": {
+    "type": "audio",
+    "url": "assets/audio/i-love-you.mp3",
+    "title": "i love you",
+    "artist": "Billie Eilish · Live at The Greek Theatre",
+    "startAt": 170,
+    "parts": [
+      "assets/audio/i-love-you-01.part",
+      "assets/audio/i-love-you-02.part",
+      "assets/audio/i-love-you-03.part",
+      "assets/audio/i-love-you-04.part",
+      "assets/audio/i-love-you-05.part"
+    ]
   }
 }

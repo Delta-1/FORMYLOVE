@@ -1,6 +1,7 @@
 import {loadConfig,elapsed,normalize,readProgress,writeProgress} from './core.js';
 import {listMemories,saveMemory} from './memories.js';
-import {initMusic} from './music.js?v=5';
+import {initMusic} from './music.js?v=6';
+import {initProposal} from './proposal.js?v=6';
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 let toastTimer;
@@ -22,7 +23,8 @@ function start(config){
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const reveal=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');reveal.unobserve(e.target);}}),{threshold:.09});$$('.letter-frame,.section-top,.memory-card,.quest-card,.music-layout').forEach(n=>{n.classList.add('reveal');reveal.observe(n);});}
 }
 function initQuests(config,music){
-  const progress=readProgress(),names={color:['❀','A rosa'],about:['✦','A estrela'],anime:['⚿','A chave']};let doorOpened=false;
+  const progress=readProgress(),names={color:['❀','A rosa'],about:['✦','A estrela'],anime:['⚿','A chave']};
+  const proposal=initProposal(music,type=>{progress.answer=type;writeProgress(progress);});
   function update(){
     $('#inventory').replaceChildren(...Object.entries(names).map(([id,[icon,name]])=>{const n=el('div',undefined,'inventory-item'+(progress.items.includes(id)?' found':''));n.append(el('strong',icon),el('span',progress.items.includes(id)?name:'? ? ?'));return n;}));
     $$('.quest-card').forEach(n=>{const done=progress.items.includes(n.dataset.quest);n.classList.toggle('completed',done);n.querySelector('.quest-state').textContent=done?'✓ Item encontrado':'Descobrir';});
@@ -51,15 +53,9 @@ function initQuests(config,music){
     }show($('#quest-dialog'));
   }
   $$('.quest-card').forEach(b=>b.onclick=()=>open(b.dataset.quest));
-  function answer(type){progress.answer=type;writeProgress(progress);$('#proposal-answer').textContent=type==='yes'?'Então é oficial. Você e eu, escrevendo o próximo capítulo. ♡':'Tudo bem, meu amor. O seu tempo e a sua resposta importam para mim. ♡';if(type==='yes')celebrate();}
-  $('#open-door').onclick=async()=>{if(progress.items.length!==3||doorOpened)return;doorOpened=true;$('#door').classList.add('open');$('#door-heading').innerHTML='A nossa porta <em>aberta.</em>';$('#door-copy').textContent='O próximo capítulo começa com uma pergunta.';$('#open-door').hidden=true;
-    // The same explicit click starts the special song, before any delayed animation.
-    music.proposal();setTimeout(()=>{$('#proposal').hidden=false;$('#proposal').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});},matchMedia('(prefers-reduced-motion: reduce)').matches?0:1100);
+  $('#open-door').onclick=()=>{if(progress.items.length!==3)return;$('#door').classList.add('open');$('#door-heading').innerHTML='A nossa porta <em>aberta.</em>';$('#door-copy').textContent='O próximo capítulo começa com uma pergunta.';$('#open-door').textContent='Reabrir o nosso momento ♡';proposal.open();
   };
-  $('#say-yes').onclick=()=>answer('yes');$('#say-no').onclick=()=>answer('no');
-  if(progress.answer){$('#proposal-answer').textContent=progress.answer==='yes'?'A nossa resposta já tem um sim guardado aqui. ♡':'A sua resposta está guardada com carinho. ♡';}
 }
-function celebrate(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;for(let i=0;i<28;i++){const n=el('span',i%2?'♡':'✦','celebration');n.style.left=Math.random()*100+'vw';n.style.animationDelay=Math.random()*1.8+'s';n.style.fontSize=(14+Math.random()*20)+'px';document.body.append(n);setTimeout(()=>n.remove(),6200);}}
 function initAlbum(config){
   let photos=[...config.photos],filter='all',photoData=null,camera=null,facing='environment';
   function render(){
