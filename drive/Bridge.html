@@ -1,0 +1,13 @@
+<!doctype html><html><head><base target="_top"><meta name="referrer" content="no-referrer"></head><body><script>
+// Template values are validated server-side and escaped by Apps Script.
+const channel = '<?= channel ?>';
+const allowedOrigin = '<?= origin ?>';
+function send(message){window.top.postMessage(Object.assign({type:'formylove',channel},message),allowedOrigin);}
+window.addEventListener('message',function(event){
+  if(event.origin!==allowedOrigin||event.source!==window.top)return;
+  const m=event.data;
+  if(!m||m.type!=='formylove'||m.channel!==channel||typeof m.id!=='string'||!['login','list','image','upload'].includes(m.action))return;
+  google.script.run.withSuccessHandler(result=>send({id:m.id,result})).withFailureHandler(error=>send({id:m.id,error:error.message||'Não foi possível acessar o álbum.'})).albumRpc({action:m.action,payload:m.payload||{}});
+});
+send({ready:true});
+</script></body></html>

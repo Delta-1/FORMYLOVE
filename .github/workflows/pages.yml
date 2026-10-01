@@ -1,0 +1,35 @@
+name: Publicar a nossa carta
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Testar
+        run: npm test
+      - name: Preparar arquivos públicos
+        run: |
+          mkdir public-site
+          cp index.html configurar.html app.js core.js music.js drive-client.js settings.js style.css config.json public-site/
+          cp -r assets drive public-site/
+          touch public-site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public-site
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v4

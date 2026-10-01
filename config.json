@@ -1,0 +1,76 @@
+{
+  "recipient": "minha mulher",
+  "signature": "Victor H. Souza",
+  "startDate": "2026-08-25T00:00:00-03:00",
+  "letter": [
+    "Desde o dia 25 de agosto, a minha história ganhou um detalhe que mudou tudo: você.",
+    "Fiz este cantinho para guardar o que, às vezes, eu não consigo colocar em palavras. Os nossos momentos, as músicas que ainda vamos escolher e esse jeito seu de transformar um dia comum em algo que eu quero lembrar.",
+    "Entre códigos, notas de piano e tudo o que ainda quero aprender, encontrei uma coisa que não quero deixar passar: a chance de construir uma história com você.",
+    "Esta carta não termina aqui. Quero continuar escrevendo com você, uma lembrança de cada vez."
+  ],
+  "science": [
+    {
+      "subject": "Na química",
+      "line": "você é meu oxigênio."
+    },
+    {
+      "subject": "Na biologia",
+      "line": "você é meu coração."
+    },
+    {
+      "subject": "Na matemática",
+      "line": "você é a solução."
+    },
+    {
+      "subject": "Na geografia",
+      "line": "você é meu mundo."
+    },
+    {
+      "subject": "Na história",
+      "line": "você é meu futuro."
+    }
+  ],
+  "favoriteColor": "Roxo",
+  "profession": "Programador",
+  "hometown": "São Paulo",
+  "animeOrder": [
+    "Re:Zero",
+    "Bleach"
+  ],
+  "playlists": [
+    {
+      "title": "Lonely Day",
+      "artist": "System Of A Down",
+      "type": "youtube",
+      "videoId": "DnGdoEa1tPg"
+    },
+    {
+      "title": "19-2000",
+      "artist": "Gorillaz",
+      "type": "youtube",
+      "videoId": "WXR-bCF5dbM"
+    },
+    {
+      "title": "Joseph",
+      "artist": "Falling In Reverse · Corey Taylor · Serj Tankian",
+      "type": "youtube",
+      "videoId": "Tk9TM7-eTmw"
+    },
+    {
+      "title": "SPECIALZ",
+      "artist": "YouTube · música escolhida por nós",
+      "type": "youtube",
+      "videoId": "5RaU8K8sLTM"
+    }
+  ],
+  "photos": [],
+  "drive": {
+    "endpoint": ""
+  },
+  "proposalSong": {
+    "title": "Quando a nossa porta se abre",
+    "artist": "A música do nosso momento",
+    "type": "youtube",
+    "videoId": "CuM61zC3xFo"
+  }
+}

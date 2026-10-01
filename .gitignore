@@ -1,0 +1,7 @@
+node_modules/
+.sites-runtime/
+.openai/
+.DS_Store
+.env
+.env.*
+test-results/
