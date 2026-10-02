@@ -2,6 +2,7 @@ import {loadConfig,elapsed,normalize,readProgress,writeProgress} from './core.js
 import {listMemories,saveMemory} from './memories.js';
 import {initMusic} from './music.js?v=8';
 import {initProposal} from './proposal.js?v=7';
+import {initStory} from './story.js?v=1';
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 let toastTimer;
@@ -18,7 +19,7 @@ function start(config){
   $('#science-love').replaceChildren(...config.science.map(p=>{const n=el('p');n.append(el('span',p.subject),el('strong',p.line));return n;}));
   const dt=new Date(config.startDate);$('#start-label').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric'}).format(dt).replaceAll('/',' · ');$('#year').textContent=new Intl.DateTimeFormat('en',{timeZone:'America/Sao_Paulo',year:'numeric'}).format(dt);
   function tick(){const time=elapsed(config.startDate);for(const [k,v] of Object.entries(time))$('#'+k).textContent=String(v).padStart(2,'0');}tick();setInterval(tick,1000);
-  const music=initMusic(config,toast);initQuests(config,music);initAlbum(config);initIntro(config,music);
+  const music=initMusic(config,toast);initQuests(config,music);initAlbum(config);initStory(music);initIntro(config,music);
   const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){$$('.header nav a,.bottom-tabs a').forEach(a=>a.classList.toggle('active',a.hash==='#'+e.target.id));}});},{rootMargin:'-15% 0px -65% 0px'});$$('.chapter').forEach(s=>observer.observe(s));
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const reveal=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');reveal.unobserve(e.target);}}),{threshold:.09});$$('.letter-frame,.section-top,.memory-card,.quest-card,.music-layout').forEach(n=>{n.classList.add('reveal');reveal.observe(n);});}
 }
@@ -86,7 +87,7 @@ function initAlbum(config){
 function initIntro(config,music){
   const intro=$('#intro');for(const [key,id] of [['him','portrait-him'],['her','portrait-her']]){const url=config.intro?.[key];if(url){const photo=config.intro.portraits?.[key]||{url};const frame=photoViewport(photo,1);frame.querySelector('img').alt=key==='him'?'O meu universo':'O seu universo';frame.querySelector('img').loading='eager';$('#'+id).replaceChildren(frame);}}
 
-  let finished=false,enterTimer;function enter(){if(finished)return;finished=true;clearTimeout(enterTimer);music.begin();intro.classList.add('departing');intro.setAttribute('aria-hidden','true');setTimeout(()=>{intro.hidden=true;$('#sound-toggle').focus({preventScroll:true});},600);}
+  let finished=false,enterTimer;function enter(){if(finished)return;finished=true;clearTimeout(enterTimer);music.begin();intro.classList.add('departing');intro.setAttribute('aria-hidden','true');setTimeout(()=>{intro.hidden=true;if(!document.body.classList.contains('mobile-story'))$('#sound-toggle').focus({preventScroll:true});document.dispatchEvent(new Event('intro-finished'));},600);}
   let animated=false;function animate(){if(animated||finished)return;animated=true;intro.classList.remove('waiting');$('#enter-site').textContent='Entrar na nossa história ♡';const duration=parseFloat(getComputedStyle(intro).getPropertyValue('--intro-duration'))||14;enterTimer=setTimeout(enter,matchMedia('(prefers-reduced-motion: reduce)').matches?1800:duration*1000+600);}
   $('#enter-site').onclick=()=>{if(intro.classList.contains('sound-blocked')){music.intro().then(allowed=>{if(allowed){intro.classList.remove('sound-blocked');$('#enter-site').textContent='Entrar na nossa história ♡';}});}else enter();};$('#skip-intro').onclick=enter;
   // The visual opening does not depend on an audio download or autoplay permission.
