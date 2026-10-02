@@ -97,7 +97,126 @@
       ]
     }
   ],
-  "photos": [],
+  "photos": [
+    {
+      "id": "retrato-01",
+      "url": "assets/photos/memoria-01.jpg",
+      "feeling": "Você, no meu universo.",
+      "category": "ela",
+      "date": "",
+      "width": 674,
+      "height": 1536,
+      "rotation": 0,
+      "crop": {
+        "x": 0,
+        "y": 466,
+        "width": 674,
+        "height": 899
+      }
+    },
+    {
+      "id": "retrato-02",
+      "url": "assets/photos/memoria-02.jpg",
+      "feeling": "Você, no meu universo.",
+      "category": "ela",
+      "date": "",
+      "width": 864,
+      "height": 1536,
+      "rotation": -90
+    },
+    {
+      "id": "retrato-03",
+      "url": "assets/photos/memoria-03.jpg",
+      "feeling": "Um pouco do meu mundo.",
+      "category": "ele",
+      "date": "",
+      "width": 864,
+      "height": 1536,
+      "rotation": 0
+    },
+    {
+      "id": "retrato-04",
+      "url": "assets/photos/memoria-04.jpg",
+      "feeling": "Um pouco do meu mundo.",
+      "category": "ele",
+      "date": "",
+      "width": 864,
+      "height": 1536,
+      "rotation": 0
+    },
+    {
+      "id": "retrato-05",
+      "url": "assets/photos/memoria-05.jpg",
+      "feeling": "Você, no meu universo.",
+      "category": "ela",
+      "date": "",
+      "width": 864,
+      "height": 1536,
+      "rotation": -90
+    },
+    {
+      "id": "retrato-06",
+      "url": "assets/photos/memoria-06.jpg",
+      "feeling": "Você, no meu universo.",
+      "category": "ela",
+      "date": "",
+      "width": 678,
+      "height": 1536,
+      "rotation": 0,
+      "crop": {
+        "x": 85,
+        "y": 569,
+        "width": 412,
+        "height": 746
+      }
+    },
+    {
+      "id": "retrato-07",
+      "url": "assets/photos/memoria-07.jpg",
+      "feeling": "Você, no meu universo.",
+      "category": "ela",
+      "date": "",
+      "width": 674,
+      "height": 1536,
+      "rotation": -90,
+      "crop": {
+        "x": 0,
+        "y": 177,
+        "width": 674,
+        "height": 1164
+      }
+    },
+    {
+      "id": "retrato-08",
+      "url": "assets/photos/memoria-08.jpg",
+      "feeling": "Você, no meu universo.",
+      "category": "ela",
+      "date": "",
+      "width": 865,
+      "height": 1536,
+      "rotation": 0
+    },
+    {
+      "id": "retrato-09",
+      "url": "assets/photos/memoria-09.jpg",
+      "feeling": "Um pouco do meu mundo.",
+      "category": "ele",
+      "date": "",
+      "width": 864,
+      "height": 1536,
+      "rotation": 0
+    },
+    {
+      "id": "retrato-10",
+      "url": "assets/photos/memoria-10.jpg",
+      "feeling": "Um pouco do meu mundo.",
+      "category": "ele",
+      "date": "",
+      "width": 678,
+      "height": 1536,
+      "rotation": 0
+    }
+  ],
   "proposalSong": {
     "type": "audio",
     "url": "assets/audio/komisan.mp3",
@@ -113,8 +232,8 @@
     "startAt": 70
   },
   "intro": {
-    "him": "",
-    "her": "",
+    "him": "assets/photos/memoria-04.jpg",
+    "her": "assets/photos/memoria-07.jpg",
     "song": {
       "type": "audio",
       "url": "assets/audio/abertura.mp3",
@@ -125,6 +244,40 @@
         "assets/audio/abertura-02.part",
         "assets/audio/abertura-03.part"
       ]
+    },
+    "portraits": {
+      "him": {
+        "id": "retrato-04",
+        "url": "assets/photos/memoria-04.jpg",
+        "feeling": "Um pouco do meu mundo.",
+        "category": "ele",
+        "date": "",
+        "width": 864,
+        "height": 1536,
+        "rotation": 0,
+        "crop": {
+          "x": 165,
+          "y": 280,
+          "width": 550,
+          "height": 720
+        }
+      },
+      "her": {
+        "id": "retrato-07",
+        "url": "assets/photos/memoria-07.jpg",
+        "feeling": "Você, no meu universo.",
+        "category": "ela",
+        "date": "",
+        "width": 674,
+        "height": 1536,
+        "rotation": -90,
+        "crop": {
+          "x": 135,
+          "y": 620,
+          "width": 530,
+          "height": 550
+        }
+      }
     }
   },
   "acceptSong": {
