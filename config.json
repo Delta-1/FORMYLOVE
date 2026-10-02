@@ -282,16 +282,15 @@
   },
   "acceptSong": {
     "type": "audio",
-    "url": "assets/audio/i-love-you.mp3",
-    "title": "i love you",
-    "artist": "Billie Eilish · Live at The Greek Theatre",
-    "startAt": 170,
+    "url": "assets/audio/die-with-a-smile.mp3",
+    "title": "Die With a Smile",
+    "artist": "Lady Gaga & Bruno Mars",
+    "startAt": 45,
     "parts": [
-      "assets/audio/i-love-you-01.part",
-      "assets/audio/i-love-you-02.part",
-      "assets/audio/i-love-you-03.part",
-      "assets/audio/i-love-you-04.part",
-      "assets/audio/i-love-you-05.part"
+      "assets/audio/die-with-a-smile-01.part",
+      "assets/audio/die-with-a-smile-02.part",
+      "assets/audio/die-with-a-smile-03.part",
+      "assets/audio/die-with-a-smile-04.part"
     ]
   }
 }
