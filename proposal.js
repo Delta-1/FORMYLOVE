@@ -4,7 +4,7 @@ const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 export function initProposal(music,onAnswer){
   const scene=$('#proposal-scene'),card=$('#proposal'),answer=$('#proposal-answer');
   const choices=$('#proposal-buttons'),yes=$('#say-yes'),no=$('#say-no');
-  let noCount=0,settled=false,timers=[],stopShow=()=>{},soundContext=null,voices=[];
+  let noCount=0,settled=false,ready=false,timers=[],stopShow=()=>{},soundContext=null,voices=[];
   music.prepareProposal();
   function later(fn,ms){timers.push(setTimeout(fn,ms));}
   function sound(){
@@ -43,13 +43,13 @@ export function initProposal(music,onAnswer){
   function cleanup(){
     timers.forEach(clearTimeout);timers=[];stopShow();stopShow=()=>{};
     voices.forEach(v=>{try{v.stop();}catch{}});voices=[];window.speechSynthesis?.cancel();
-    scene.classList.remove('revealed','celebrating');document.body.classList.remove('proposal-active');music.resumeBackground();
+    ready=false;scene.classList.remove('revealed','celebrating');$('#proposal-question').classList.remove('question-fading');document.body.classList.remove('proposal-active');music.resumeBackground();
   }
   scene.addEventListener('close',cleanup);
   $('#close-proposal').onclick=()=>scene.close();
   $('#proposal-settings').onclick=()=>$('#sound-settings').showModal();
   yes.onclick=()=>{
-    if(settled)return;settled=true;onAnswer('yes');choices.hidden=true;
+    if(settled||!ready)return;settled=true;onAnswer('yes');choices.hidden=true;
     music.accept();
     $('#proposal-question').hidden=true;$('#proposal-sticker').hidden=true;$('#proposal-sub').hidden=true;
     $('#proposal-eyebrow').textContent='O NOSSO PRÓXIMO CAPÍTULO';
@@ -58,18 +58,33 @@ export function initProposal(music,onAnswer){
     later(()=>{$('#love-finale').hidden=false;$('#love-finale').focus({preventScroll:true});},reduced()?0:5700);
   };
   no.onclick=()=>{
-    if(settled)return;
+    if(settled||!ready)return;
     if(++noCount===1){answer.textContent='Tem certeza? :(';choices.classList.add('no-moved');no.focus({preventScroll:true});return;}
     settled=true;onAnswer('no');sigh();choices.hidden=true;$('#proposal-sticker').hidden=true;
     const face=document.createElement('span');face.className='sad-face';face.textContent='😔';face.setAttribute('aria-label','Carinha triste');
     const message=document.createElement('p');message.textContent='Infelizmente não foi dessa vez, mas continuarei me empenhando!!';answer.replaceChildren(face,message);
   };
+  function question(text){
+    const heading=$('#proposal-question');heading.classList.remove('question-fading');heading.textContent=text;
+  }
+  function showFullQuestion(){
+    const heading=$('#proposal-question');heading.replaceChildren(document.createTextNode('Welissiane, você aceita '));
+    const emphasis=document.createElement('em');emphasis.textContent='namorar comigo?';heading.append(emphasis);heading.classList.remove('question-fading');
+    for(const id of ['proposal-eyebrow','proposal-sticker','proposal-sub'])$('#'+id).hidden=false;
+    later(()=>{ready=true;choices.hidden=false;choices.classList.add('choices-arrive');yes.focus({preventScroll:true});},reduced()?100:1200);
+  }
   return {open(){
-    if(scene.open)return;noCount=0;settled=false;choices.hidden=false;choices.classList.remove('no-moved');answer.replaceChildren();
-    for(const id of ['proposal-question','proposal-sticker','proposal-sub'])$('#'+id).hidden=false;
+    if(scene.open)return;noCount=0;settled=false;ready=false;choices.hidden=true;choices.classList.remove('no-moved','choices-arrive');answer.replaceChildren();
+    $('#proposal-question').hidden=false;question('Welissiane');
+    for(const id of ['proposal-eyebrow','proposal-sticker','proposal-sub'])$('#'+id).hidden=true;
     $('#proposal-eyebrow').textContent='EU ESCOLHO VOCÊ.';$('#love-finale').hidden=true;$('#love-canvas').hidden=true;
     document.body.classList.add('proposal-active');scene.showModal();card.hidden=false;creak();music.proposal();
-    later(()=>{scene.classList.add('revealed');yes.focus({preventScroll:true});},reduced()?100:1500);
+    const start=reduced()?100:1500,hold=reduced()?1800:2900,fade=reduced()?0:500;
+    later(()=>{scene.classList.add('revealed');},start);
+    later(()=>{$('#proposal-question').classList.add('question-fading');},start+hold);
+    later(()=>{question('você');},start+hold+fade);
+    later(()=>{$('#proposal-question').classList.add('question-fading');},start+hold*2+fade);
+    later(showFullQuestion,start+hold*2+fade*2);
   }};
 }
 

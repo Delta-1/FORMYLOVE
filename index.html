@@ -5,11 +5,11 @@
   <meta name="theme-color" content="#110d10"><meta name="description" content="Uma carta, as nossas memórias e um pequeno universo feito de nós.">
   <meta name="referrer" content="strict-origin-when-cross-origin"><title>Para minha mulher · FORMYLOVE</title>
   <link rel="icon" href="assets/heart.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=8"><script type="module" src="app.js?v=8"></script>
+  <link rel="stylesheet" href="style.css?v=10"><script type="module" src="app.js?v=10"></script>
 </head>
 <body>
   <div class="garden" aria-hidden="true"><div class="vine vine-left"></div><div class="vine vine-right"></div></div>
-  <section id="intro" class="intro" aria-label="O encontro dos nossos universos">
+  <section id="intro" class="intro waiting" aria-label="O encontro dos nossos universos">
     <p class="eyebrow">DOIS UNIVERSOS. UM ENCONTRO.</p><div class="portrait-stage"><div class="portrait-orbit blue"><div class="portrait" id="portrait-him"><span>V</span></div></div><div class="portrait-orbit pink"><div class="portrait" id="portrait-her"><span>♡</span></div></div><div class="fusion">♡</div></div>
     <h2>Até que <em>virou nós.</em></h2><button id="enter-site" class="button primary">Entrar na nossa história ♡</button><button id="skip-intro" class="text-button">Pular abertura</button>
   </section>
@@ -36,7 +36,7 @@
     <button id="proposal-settings" class="scene-sound" aria-label="Ajustar o volume">♫</button>
     <div class="proposal" id="proposal" hidden>
       <p class="eyebrow" id="proposal-eyebrow">EU ESCOLHO VOCÊ.</p>
-      <h2 id="proposal-question">Quer namorar<br><em>comigo?</em></h2>
+      <h2 id="proposal-question" aria-live="polite" aria-atomic="true">Welissiane, você aceita <em>namorar comigo?</em></h2>
       <p class="proposal-sub" id="proposal-sub">Vamos oficializar?</p>
       <img id="proposal-sticker" src="assets/pedido.png" alt="Figurinha com olhinhos grandes, oferecendo um abraço" width="190" height="190">
       <div class="proposal-buttons" id="proposal-buttons"><button class="button primary" id="say-yes">Sim, vamos! ♡</button><button class="button" id="say-no">Não</button></div>

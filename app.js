@@ -1,7 +1,7 @@
 import {loadConfig,elapsed,normalize,readProgress,writeProgress} from './core.js';
 import {listMemories,saveMemory} from './memories.js';
 import {initMusic} from './music.js?v=8';
-import {initProposal} from './proposal.js?v=6';
+import {initProposal} from './proposal.js?v=7';
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 let toastTimer;
@@ -88,8 +88,9 @@ function initIntro(config,music){
 
   let finished=false,enterTimer;function enter(){if(finished)return;finished=true;clearTimeout(enterTimer);music.begin();intro.classList.add('departing');intro.setAttribute('aria-hidden','true');setTimeout(()=>{intro.hidden=true;$('#sound-toggle').focus({preventScroll:true});},600);}
   let animated=false;function animate(){if(animated||finished)return;animated=true;intro.classList.remove('waiting');$('#enter-site').textContent='Entrar na nossa história ♡';const duration=parseFloat(getComputedStyle(intro).getPropertyValue('--intro-duration'))||14;enterTimer=setTimeout(enter,matchMedia('(prefers-reduced-motion: reduce)').matches?1800:duration*1000+600);}
-  $('#enter-site').onclick=()=>{if(intro.classList.contains('waiting')){music.intro();animate();}else enter();};$('#skip-intro').onclick=enter;
-  intro.classList.add('waiting');$('#enter-site').textContent='Começar com música ♡';music.intro().then(allowed=>{if(allowed)animate();});
+  $('#enter-site').onclick=()=>{if(intro.classList.contains('sound-blocked')){music.intro().then(allowed=>{if(allowed){intro.classList.remove('sound-blocked');$('#enter-site').textContent='Entrar na nossa história ♡';}});}else enter();};$('#skip-intro').onclick=enter;
+  // The visual opening does not depend on an audio download or autoplay permission.
+  animate();music.intro().then(allowed=>{if(!allowed&&!finished){intro.classList.add('sound-blocked');$('#enter-site').textContent='Ativar música ♫';}}).catch(()=>{if(!finished){intro.classList.add('sound-blocked');$('#enter-site').textContent='Ativar música ♫';}});
 }
 
 function formatDate(value){const date=new Date(/^\d{4}-\d{2}-\d{2}$/.test(value)?value+'T12:00:00-03:00':value);return Number.isFinite(date.getTime())?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'long',year:'numeric'}).format(date):'Um momento nosso';}
