@@ -23,7 +23,7 @@ jobs:
       - name: Preparar arquivos públicos
         run: |
           mkdir public-site
-          cp index.html configurar.html app.js core.js music.js memories.js settings.js style.css config.json public-site/
+          cp index.html configurar.html app.js core.js music.js memories.js settings.js proposal.js story.js style.css config.json public-site/
           cp -r assets public-site/
           touch public-site/.nojekyll
       - uses: actions/configure-pages@v5
