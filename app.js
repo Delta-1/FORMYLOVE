@@ -2,7 +2,7 @@ import {loadConfig,elapsed,normalize,readProgress,writeProgress} from './core.js
 import {listMemories,saveMemory} from './memories.js';
 import {initMusic} from './music.js?v=8';
 import {initProposal} from './proposal.js?v=7';
-import {initStory} from './story.js?v=1';
+import {initStory} from './story.js?v=2';
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 let toastTimer;

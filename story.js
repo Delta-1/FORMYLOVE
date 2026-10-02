@@ -3,7 +3,8 @@ const order=['envelope','letter','clock','album','trilha','enigmas','porta'];
 const labels=['Uma carta para você','O que eu queria te dizer','O nosso tempo','Nossas memórias','A nossa trilha','Três pequenos segredos','O próximo capítulo'];
 export function initStory(music){
   const screen=matchMedia('(max-width: 767px)'),forced=new URLSearchParams(location.search).get('experience')==='story';
-  let current=0,opened=false,opening=false,timer;
+  let current=0,opened=false,opening=false,timer,completed=false;
+  const visited=new Set(),tabs=document.querySelector('.bottom-tabs');
   const pages=order.map(id=>$('#'+id));
   pages.forEach((page,i)=>{
     page.classList.add('story-page');page.setAttribute('tabindex','-1');
@@ -12,6 +13,8 @@ export function initStory(music){
   function enabled(){return screen.matches||forced;}
   function go(i,focus=true){
     if(!enabled())return;i=Math.max(0,Math.min(i,order.length-1));if(i===1&&!opened)i=0;
+    visited.add(i);if(i===order.length-1&&visited.size===order.length)completed=true;
+    document.body.classList.toggle('story-completed',completed);tabs.hidden=!completed;tabs.inert=!completed;
     current=i;pages.forEach((page,j)=>{page.classList.toggle('story-active',j===i);page.inert=j!==i;});
     $('#carta').inert=true;
     $('#story-count').textContent=String(i+1).padStart(2,'0')+' / 07';$('#story-title').textContent=labels[i];$('#story-back').disabled=i===0;
@@ -21,7 +24,7 @@ export function initStory(music){
   }
   function sync(){
     document.body.classList.toggle('mobile-story',enabled());
-    if(enabled())go(current,false);else{pages.forEach(page=>{page.inert=false;});$('#carta').inert=false;}
+    if(enabled())go(current,false);else{pages.forEach(page=>{page.inert=false;});$('#carta').inert=false;tabs.hidden=false;tabs.inert=false;}
   }
   $('#story-back').onclick=()=>go(current-1);
   $('#story-sound').onclick=()=>$('#sound-settings').showModal();
@@ -35,7 +38,9 @@ export function initStory(music){
   document.addEventListener('click',e=>{
     if(!enabled())return;const anchor=e.target.closest('a[href^="#"]');if(!anchor)return;
     const id=anchor.hash.slice(1);if(!['carta','main',...order].includes(id))return;
-    e.preventDefault();go(['carta','main'].includes(id)?0:order.indexOf(id));
+    e.preventDefault();const target=['carta','main'].includes(id)?0:order.indexOf(id);
+    if(!completed&&!visited.has(target))return;
+    go(target);
   });
   document.addEventListener('intro-finished',()=>{if(enabled())go(current);});
   screen.addEventListener('change',sync);sync();

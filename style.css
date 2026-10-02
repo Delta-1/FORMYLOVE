@@ -58,3 +58,9 @@ html,body{overflow-x:clip}.door-section{overflow:clip}@media(max-width:420px){.h
 @keyframes chapter-arrives{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes envelope-zoom{0%,50%{transform:scale(1);opacity:1}85%{transform:scale(2.2);opacity:1}100%{transform:scale(4);opacity:0}}
 @media(prefers-reduced-motion:reduce){.mobile-story .story-active,.opening .envelope-button{animation:none}.envelope-flap,.envelope-letter,.envelope-seal{transition:none}}
+
+/* Let each chapter unfold before opening up the shortcuts. */
+.mobile-story .bottom-tabs[hidden]{display:none!important}
+.mobile-story:not(.story-completed) #main{bottom:calc(24px + env(safe-area-inset-bottom))}
+.mobile-story.story-completed .bottom-tabs{animation:chapter-arrives .7s ease both}
+@media(prefers-reduced-motion:reduce){.mobile-story.story-completed .bottom-tabs{animation:none}}
