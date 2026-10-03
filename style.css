@@ -68,3 +68,53 @@ html,body{overflow-x:clip}.door-section{overflow:clip}@media(max-width:420px){.h
 /* Keep the record label circular and its lettering inside smaller discs. */
 @media(max-width:767px){.vinyl-label{font-size:24px}}
 .mobile-story .vinyl-label{font-size:20px}.mobile-story .vinyl-label span{font-size:6px}
+
+/* The same paced chapters, with a spacious composition on a computer. */
+@media(min-width:768px){
+ .mobile-story #main{inset:108px 32px 24px;width:auto;max-width:1240px}
+ .mobile-story.story-completed #main{bottom:104px}
+ .mobile-story .story-hud{top:22px;left:64px;right:64px;max-width:1112px}
+ .mobile-story .story-hud-row button{width:46px;height:46px}
+ .mobile-story #story-title{font-size:20px}
+ .mobile-story .story-page{padding:32px 56px 40px}
+ .mobile-story .story-continue{max-width:420px;margin:32px auto 4px;font-size:21px}
+ .mobile-story .vine{width:220px;opacity:.4}
+ .mobile-story .vine-left{left:-75px}.mobile-story .vine-right{right:-75px}
+ .mobile-story .envelope-page h2{font-size:clamp(3.5rem,5vw,5.2rem)}
+ .mobile-story .envelope-page .eyebrow{font-size:12px;max-width:none}
+ .mobile-story .envelope-button{transform:scale(1.2);margin:20px 0}
+ .mobile-story .envelope-hint{font-size:12px}
+ .mobile-story .letter-frame{max-width:900px;margin:auto;padding:44px 56px}
+ .mobile-story .letter-frame h2{font-size:56px}
+ .mobile-story .letter-body{font-size:24px;line-height:1.65}
+ .mobile-story .science-love{display:grid;grid-template-columns:1fr 1fr;gap:20px 40px}
+ .mobile-story .science-love p{margin:0}
+ .mobile-story .counter{gap:32px}
+ .mobile-story .counter div{min-width:100px}
+ .mobile-story .counter strong{font-size:90px}
+ .mobile-story .counter span{font-size:12px}
+ .mobile-story .counter i{font-size:40px}
+ .mobile-story #clock .eyebrow{max-width:none;font-size:13px}
+ .mobile-story .section-top{display:flex;align-items:center;gap:32px}
+ .mobile-story .section-top h2{font-size:54px}
+ .mobile-story .section-intro{font-size:23px}
+ .mobile-story .album-toolbar{display:flex;justify-content:space-between;gap:20px}
+ .mobile-story .album-actions{margin-top:0}
+ .mobile-story .memory-card,.mobile-story .empty-memory{flex-basis:300px}
+ .mobile-story .album-grid{gap:24px}
+ .mobile-story .music-layout{display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:40px;align-items:start}
+ .mobile-story .record-card{padding:30px}
+ .mobile-story .vinyl{width:240px;height:240px}
+ .mobile-story .vinyl-label{font-size:28px}.mobile-story .vinyl-label span{font-size:8px}
+ .mobile-story .track-list{margin-top:0}
+ .mobile-story .quest-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+ .mobile-story .quest-card{min-height:260px;padding:28px 22px}
+ .mobile-story .quest-symbol{font-size:48px}
+ .mobile-story #porta h2{font-size:60px}
+ .mobile-story #porta .door{height:390px;width:270px}
+ .mobile-story .bottom-tabs{left:calc(50% - 320px);right:calc(50% - 320px)}
+ .mobile-story .bottom-tabs a,.mobile-story .bottom-tabs button{font-size:11px}
+ .portrait-stage{width:min(800px,100%);height:350px}
+ .portrait-orbit{width:180px;height:180px;left:calc(50% - 90px);top:85px}
+ .intro .blue{--from:-380px;--orbit:-120px}.intro .pink{--from:380px;--orbit:120px}
+}

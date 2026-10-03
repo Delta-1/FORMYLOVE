@@ -2,7 +2,7 @@ const $=s=>document.querySelector(s);
 const order=['envelope','letter','clock','album','trilha','enigmas','porta'];
 const labels=['Uma carta para você','O que eu queria te dizer','O nosso tempo','Nossas memórias','A nossa trilha','Três pequenos segredos','O próximo capítulo'];
 export function initStory(music){
-  const screen=matchMedia('(max-width: 767px)'),forced=new URLSearchParams(location.search).get('experience')==='story';
+  const screen=matchMedia('(max-width: 767px)'),classic=new URLSearchParams(location.search).get('experience')==='classic';
   let current=0,opened=false,opening=false,timer,completed=false;
   const visited=new Set(),tabs=document.querySelector('.bottom-tabs');
   const pages=order.map(id=>$('#'+id));
@@ -10,7 +10,7 @@ export function initStory(music){
     page.classList.add('story-page');page.setAttribute('tabindex','-1');
     if(i>0&&i<order.length-1){const next=document.createElement('button');next.className='button primary story-continue';next.textContent=i===5?'Ir até a porta ♡':'Continuar →';next.onclick=()=>go(i+1);page.append(next);}
   });
-  function enabled(){return screen.matches||forced;}
+  function enabled(){return !classic;}
   function go(i,focus=true){
     if(!enabled())return;i=Math.max(0,Math.min(i,order.length-1));if(i===1&&!opened)i=0;
     visited.add(i);if(i===order.length-1&&visited.size===order.length)completed=true;
